@@ -1,5 +1,30 @@
 import numpy as np
 import heapq
+# These are all just basic potential functions
+
+# Takes node (current state) of vehicle and determines neighbouring nodes (where to go)
+def find_directions(node):
+    return
+
+# Calculates distance between current node and destination node
+def get_distance(node, destination):
+    return
+
+# Estimates traffic time between two nodes based on current vehicles in ctcu
+def get_traffic(node, neighbour, vehicle_locations):
+    return
+
+# Determines if the current node is an intersection
+def is_intersection(node):
+    return
+
+# Calculate reward for a certain action (moving nodes)
+def get_reward(vehicle, action, node):
+    return
+
+# Normalize traffic time and distance to ensure proportionate decision making
+def normalize(value):
+    return
 
 # Algorithm that chooses the best neighbouring node for a vehicle to proceed to
 def bnart(vehicle, road_map):
@@ -60,7 +85,6 @@ def get_node_indices(coordinates, road_map):
                     node_indices.append(i * len(row) + j)
     return node_indices
 
-
 def main():
     
     road_map = [
@@ -90,17 +114,16 @@ def main():
     distance_matrix = np.zeros((num_nodes, num_nodes))
 
     for i in range(num_nodes):
-        for j in range(num_nodes):
-            if i != j:
-                coord1 = road_map[i // 5][i % 5]
-                coord2 = road_map[j // 5][j % 5]
-                # Calculate the distance
-                distance = calculate_distance(coord1, coord2)
-                # Round the distance to one decimal place
-                rounded_distance = round(distance, 1)
-                # Assign the rounded distance to the matrix
-                distance_matrix[i][j] = rounded_distance
-                distance_matrix[j][i] = rounded_distance
+        for j in range(i + 1, num_nodes):
+            coord1 = road_map[i // 5][i % 5]
+            coord2 = road_map[j // 5][j % 5]
+            # Calculate the distance
+            distance = calculate_distance(coord1, coord2)
+            # Round the distance to one decimal place
+            rounded_distance = round(distance, 1)
+            # Assign the rounded distance to the matrix
+            distance_matrix[i][j] = rounded_distance
+            distance_matrix[j][i] = rounded_distance
 
     for row in distance_matrix:
         for value in row:
