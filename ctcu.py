@@ -111,7 +111,7 @@ def main():
         # Print the result for each vehicle
         if path is not None:
             print(f"Vehicle {i + 1}: Shortest Time = {shortest_time:.1f}")
-            print("Shortest Path:", path)
+            print("Path Taken:", path)
         else:
             print(f"Vehicle {i + 1}: No path found")
 
