@@ -21,10 +21,12 @@ def choose_action(Q, state, epsilon):
     else:
         return np.argmax(Q[state, :])  # Exploit
 
+# Function to update the Q-values using the Q-learning update rule
 def update_q_value(Q, state, action, reward, next_state, alpha, gamma):
     Q[state, action] = (1 - alpha) * Q[state, action] + alpha * (reward + gamma * np.max(Q[next_state, :]))
     return Q
 
+# Function to simulate a vehicle navigating using Q-learning
 def navigate_vehicle_Qlearning(Q, start, end, epsilon=0.1, alpha=0.1, gamma=0.6, num_episodes=1000):
     for episode in range(num_episodes):
         current_state = start
@@ -32,8 +34,7 @@ def navigate_vehicle_Qlearning(Q, start, end, epsilon=0.1, alpha=0.1, gamma=0.6,
             action = choose_action(Q, current_state, epsilon)
             
             # Simulate taking the action and get the next state and reward
-            next_state = simulate_movement(current_state, action)
-            reward = calculate_reward(next_state, end)
+            next_state, reward = simulate_movement(current_state, action)
             
             # Update the Q-value
             Q = update_q_value(Q, current_state, action, reward, next_state, alpha, gamma)
@@ -42,13 +43,25 @@ def navigate_vehicle_Qlearning(Q, start, end, epsilon=0.1, alpha=0.1, gamma=0.6,
 
     return Q
 
+# Function to simulate the movement between states based on the chosen action
 def simulate_movement(current_state, action):
-    return action  # For simplicity, assuming action is the next state
+    action_effects = {
+        0: (-1, 0),  # up
+        1: (1, 0),   # down
+        2: (0, -1),  # left
+        3: (0, 1)    # right
+    }
 
+    return (
+        current_state[0] + action_effects[action][0],
+        current_state[1] + action_effects[action][1]
+    )
 # Function to calculate the reward based on the current state and the goal state
-def calculate_reward(current_state, goal_state):
+def get_reward(current_state, goal_state):
     # Implement the logic to calculate the reward based on the current state and the goal state
-    return -1 if current_state != goal_state else 0  # Negative reward until reaching the goal
+    if current_state == goal_state:
+        return 100
+    return -1 if current_state in [(1, 1), (2, 1)] else 0
 
 # Function to choose the best path based on learned Q-values
 def choose_best_path(Q, start, end):
@@ -57,7 +70,7 @@ def choose_best_path(Q, start, end):
 
     while current_state != end:
         action = np.argmax(Q[current_state, :])
-        next_state = simulate_movement(current_state, action)
+        next_state, _ = simulate_movement(current_state, action, end)
         path.append(next_state)
         current_state = next_state
 
@@ -74,7 +87,7 @@ def main():
     ]
 
     # Define the vehicles as sources and destinations with coordinates. source = starting point, destination = end point
-    vehicles = [{'source': (0, 0), 'destination': (3, 3)}, {'source': (4, 0), 'destination': (2, 3)}, {'source': (0, 3), 'destination': (4, 1)}]
+    vehicles = [{'source': (0, 0), 'destination': (3, 3)}, {'source': (4, 0), 'destination': (2, 3)}, {'source': (0, 3), 'destination': (4, 2)}]
         # Add more vehicles with source and destination coordinates as needed
     num_states = len(road_map) * len(road_map[0])
     num_actions = len(road_map) * len(road_map[0])
@@ -88,7 +101,7 @@ def main():
         destination_node = get_node_indices([vehicle['destination']], road_map)[0]
 
         # Simulate navigation using Q-learning
-        Q = navigate_vehicle_Qlearning(Q, source_node, destination_node)
+        Q = navigate_vehicle_Qlearning(Q, source_node, destination_node, num_episodes=1000)
 
         # Choose the best path based on learned Q-values
         best_path = choose_best_path(Q, source_node, destination_node)
