@@ -1,5 +1,4 @@
 import numpy as np
-<<<<<<< HEAD
 import heapq
 
 # Algorithm that chooses the best neighbouring node for a vehicle to proceed to
@@ -8,7 +7,6 @@ def bnart(vehicle, road_map):
     destination = vehicle['destination']
 
 # Calculating the Euclidean distance between two coordinates 
-=======
 
 # Function to calculate the shortest time using Dijkstra's algorithm
 def calculate_shortest_time_dijkstra(graph, start, end):
@@ -39,7 +37,6 @@ def calculate_shortest_time_dijkstra(graph, start, end):
         return None, None
     
 # # Calculating the Euclidean distance between two coordinates 
->>>>>>> 4347a41cf3039d55c114a58acef9a131b4f7ecd2
 def calculate_distance(coord1, coord2):
     x1, y1 = coord1
     x2, y2 = coord2
