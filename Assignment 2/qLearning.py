@@ -1,5 +1,12 @@
 import numpy as np
 
+road_map = [
+    [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)],
+    [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)],
+    [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
+    [(0, 3), (1, 3), (2, 3), (3, 3), (4, 3)],
+    [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)]
+]
 # Function to obtain node indices for given coordinates
 def get_node_indices(coordinates, road_map):
     node_indices = []
@@ -10,6 +17,14 @@ def get_node_indices(coordinates, road_map):
                     node_indices.append(i * len(row) + j)
     return node_indices
 
+def get_coordinates(node_index, road_map):
+    num_rows = len(road_map)
+    num_cols = len(road_map[0])
+    
+    row = node_index // num_cols
+    col = node_index % num_cols
+    
+    return road_map[row][col]
 # Function to initialize the Q-table
 def initialize_q_table(num_states, num_actions):
     return np.zeros((num_states, num_actions))
@@ -26,29 +41,52 @@ def update_q_value(Q, state, action, reward, next_state, alpha, gamma):
     return Q
 
 def navigate_vehicle_Qlearning(Q, start, end, epsilon=0.1, alpha=0.1, gamma=0.6, num_episodes=1000):
+    episode_rewards = []
+
     for episode in range(num_episodes):
         current_state = start
+        total_reward = 0  # Track the total reward for the episode
+
         while current_state != end:
             action = choose_action(Q, current_state, epsilon)
-            
+
             # Simulate taking the action and get the next state and reward
             next_state = simulate_movement(current_state, action)
-            reward = calculate_reward(next_state, end)
+            reward = calculate_reward(next_state, end, road_map)
             
             # Update the Q-value
             Q = update_q_value(Q, current_state, action, reward, next_state, alpha, gamma)
             
+            total_reward += reward  # Accumulate the reward for the episode
+
             current_state = next_state
+
+        episode_rewards.append(total_reward)
+        # Testing purposes 
+        #print(f"Episode {episode + 1}, Total Reward: {total_reward}")
+
+    # Plot the learning curve
+    import matplotlib.pyplot as plt
+    plt.plot(episode_rewards)
+    plt.xlabel('Episode')
+    plt.ylabel('Total Reward')
+    plt.show()
 
     return Q
 
 def simulate_movement(current_state, action):
     return action  # For simplicity, assuming action is the next state
 
-# Function to calculate the reward based on the current state and the goal state
-def calculate_reward(current_state, goal_state):
-    # Implement the logic to calculate the reward based on the current state and the goal state
-    return -1 if current_state != goal_state else 0  # Negative reward until reaching the goal
+def calculate_reward(current_state, goal_state, road_map):
+    current_coordinates = get_coordinates(current_state, road_map)
+    goal_coordinates = get_coordinates(goal_state, road_map)
+
+    # Calculate Euclidean distance between current state and goal state
+    distance = np.sqrt((current_coordinates[0] - goal_coordinates[0]) ** 2 +
+                      (current_coordinates[1] - goal_coordinates[1]) ** 2)
+
+    # Return negative distance as the reward
+    return -distance
 
 # Function to choose the best path based on learned Q-values
 def choose_best_path(Q, start, end):
