@@ -1,12 +1,5 @@
 import numpy as np
 
-road_map = [
-    [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)],
-    [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)],
-    [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
-    [(0, 3), (1, 3), (2, 3), (3, 3), (4, 3)],
-    [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)]
-]
 # Function to obtain node indices for given coordinates
 def get_node_indices(coordinates, road_map):
     node_indices = []
@@ -40,7 +33,7 @@ def update_q_value(Q, state, action, reward, next_state, alpha, gamma):
     Q[state, action] = (1 - alpha) * Q[state, action] + alpha * (reward + gamma * np.max(Q[next_state, :]))
     return Q
 
-def navigate_vehicle_Qlearning(Q, start, end, epsilon=0.1, alpha=0.1, gamma=0.6, num_episodes=1000):
+def navigate_vehicle_Qlearning(Q, start, end, road_map, epsilon=0.1, alpha=0.1, gamma=0.6, num_episodes=1000):
     episode_rewards = []
 
     for episode in range(num_episodes):
@@ -126,7 +119,7 @@ def main():
         destination_node = get_node_indices([vehicle['destination']], road_map)[0]
 
         # Simulate navigation using Q-learning
-        Q = navigate_vehicle_Qlearning(Q, source_node, destination_node)
+        Q = navigate_vehicle_Qlearning(Q, source_node, destination_node, road_map)
 
         # Choose the best path based on learned Q-values
         best_path = choose_best_path(Q, source_node, destination_node)
