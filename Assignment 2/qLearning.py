@@ -105,7 +105,9 @@ def main():
     ]
 
     # Define the vehicles as sources and destinations with coordinates. source = starting point, destination = end point
-    vehicles = [{'source': (0, 0), 'destination': (3, 3)}, {'source': (4, 0), 'destination': (2, 3)}, {'source': (0, 3), 'destination': (4, 1)}]
+    vehicles = [{'source': (0, 0), 'destination': (3, 3)}, 
+                {'source': (4, 0), 'destination': (2, 3)}, 
+                {'source': (0, 3), 'destination': (4, 1)}]
         # Add more vehicles with source and destination coordinates as needed
     num_states = len(road_map) * len(road_map[0])
     num_actions = len(road_map) * len(road_map[0])
