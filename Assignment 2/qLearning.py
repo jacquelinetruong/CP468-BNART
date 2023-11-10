@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 # Function to obtain node indices for given coordinates
 def get_node_indices(coordinates, road_map):
@@ -94,6 +96,57 @@ def choose_best_path(Q, start, end):
 
     return path
 
+def convert_path_to_coordinates(path, road_map):
+    coordinates_path = [get_coordinates(node_index, road_map) for node_index in path]
+    return coordinates_path
+
+def visualize_grid(road_map, vehicles):
+    fig, ax = plt.subplots()
+
+    # Plot grid lines
+    for i in range(len(road_map)):
+        for j in range(len(road_map[0])):
+            ax.add_patch(patches.Rectangle((i, j), 1, 1, linewidth=1, edgecolor='black', facecolor='white'))
+
+    # Plot vehicles
+    for vehicle in vehicles:
+        source = vehicle['source']
+        destination = vehicle['destination']
+        ax.add_patch(patches.Rectangle(source, 1, 1, linewidth=1, edgecolor='blue', facecolor='lightblue'))
+        ax.add_patch(patches.Rectangle(destination, 1, 1, linewidth=1, edgecolor='red', facecolor='lightcoral'))
+
+    plt.xlim(0, len(road_map))
+    plt.ylim(0, len(road_map[0]))
+    plt.gca().invert_yaxis()  # Invert y-axis to match the grid representation
+    plt.show()
+
+
+def visualize_grid_with_paths(road_map, vehicles, paths):
+    fig, ax = plt.subplots()
+
+    # Plot grid lines
+    for i in range(len(road_map)):
+        for j in range(len(road_map[0])):
+            ax.add_patch(patches.Rectangle((i, j), 1, 1, linewidth=1, edgecolor='black', facecolor='white'))
+
+    # Plot vehicles
+    for vehicle, path in zip(vehicles, paths):
+        source = vehicle['source']
+        destination = vehicle['destination']
+        ax.add_patch(patches.Rectangle(source, 1, 1, linewidth=1, edgecolor='blue', facecolor='lightblue'))
+        ax.add_patch(patches.Rectangle(destination, 1, 1, linewidth=1, edgecolor='red', facecolor='lightcoral'))
+
+        # Plot path
+        path_coordinates = [get_coordinates(node_index, road_map) for node_index in path]
+        ax.plot(*zip(*path_coordinates), marker='o', color='green', markersize=8, linewidth=2)
+
+    plt.xlim(0, len(road_map))
+    plt.ylim(0, len(road_map[0]))
+    plt.gca().invert_yaxis()  # Invert y-axis to match the grid representation
+    plt.show()
+
+
+
 def main():
     # Define the state space and action space
     road_map = [
@@ -109,11 +162,17 @@ def main():
                 {'source': (4, 0), 'destination': (2, 3)}, 
                 {'source': (0, 3), 'destination': (4, 1)}]
         # Add more vehicles with source and destination coordinates as needed
+
+    # Visualize the grid and vehicles
+    visualize_grid(road_map, vehicles)  
+
     num_states = len(road_map) * len(road_map[0])
     num_actions = len(road_map) * len(road_map[0])
 
     # Initialize the Q-table
     Q = initialize_q_table(num_states, num_actions)
+
+    best_paths = [] 
 
     # Loop through each vehicle and simulate navigation using Q-learning
     for i, vehicle in enumerate(vehicles):
@@ -125,12 +184,18 @@ def main():
 
         # Choose the best path based on learned Q-values
         best_path = choose_best_path(Q, source_node, destination_node)
+        best_path_coordinates = convert_path_to_coordinates(best_path, road_map)
 
         # Print the result for each vehicle
         if best_path is not None:
+            best_paths.append(best_path)
             print(f"Vehicle {i + 1}: Best Path = {best_path}")
+            print("Best Path (Coordinates):", best_path_coordinates)
         else:
             print(f"Vehicle {i + 1}: No path found")
+        
+    
+    visualize_grid_with_paths(road_map, vehicles, best_paths)
 
 if __name__ == "__main__":
     main()
