@@ -208,8 +208,8 @@ def main():
         # Print the result for each vehicle
         if best_path is not None:
             best_paths.append(best_path)
-            print(f"Vehicle {i + 1}: Best Path = {best_path}")
-            print("Best Path (Coordinates):", best_path_coordinates)
+            print(f"Vehicle {i + 1}: Best Path (Coordinates):", best_path_coordinates)
+            
         else:
             print(f"Vehicle {i + 1}: No path found")
         
