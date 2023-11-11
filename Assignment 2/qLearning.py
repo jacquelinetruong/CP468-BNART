@@ -82,16 +82,16 @@ def visualize_grid_with_arrows(road_map, vehicles, best_path_coordinates):
         destination = vehicle['destination']
 
         # Add vehicle points to the scatter plot
-        vehicle_points = [source]
-        vx, vy = zip(*vehicle_points)
-        ax.scatter(vx, vy, c='black', marker='X', s=100)
+        source_points = [source]
+        sx, sy = zip(*source_points)
+        ax.scatter(sx, sy, c='black', marker='X', s=100)
 
         destination_points = [destination]
-        vx, vy = zip(*destination_points)
-        ax.scatter(vx, vy, c='green', marker='s', s=100)
+        dx, dy = zip(*destination_points)
+        ax.scatter(dx, dy, c='green', marker='s', s=100)
 
-    ax.scatter(vx, vy, c='black', marker='X', s=100, label="source")
-    ax.scatter(vx, vy, c='green', marker='s', s=100, label="destination")
+    ax.scatter(sx, sy, c='black', marker='X', s=100, label="source")
+    ax.scatter(dx, dy, c='green', marker='s', s=100, label="destination")
 
     # Plot best path
     path_coordinates = np.array(best_path_coordinates)
@@ -103,11 +103,13 @@ def visualize_grid_with_arrows(road_map, vehicles, best_path_coordinates):
         dy = best_path_coordinates[i + 1][1] - best_path_coordinates[i][1]
         ax.arrow(best_path_coordinates[i][0], best_path_coordinates[i][1], dx, dy, head_width=0.1, head_length=0.1, fc='red', ec='red')
 
-    plt.title(f'Best Path For {vehicle}')
+    
     plt.xlim(0, len(road_map))
     plt.ylim(0, len(road_map[0]))
     plt.legend()
+    plt.title("Best Path")
     plt.show()
+
 
 # Function to initialize the Q-table
 def initialize_q_table(num_states, num_actions):
@@ -227,7 +229,7 @@ def main():
 
     # Loop through each vehicle and simulate navigation using Q-learning
     for i, vehicle in enumerate(vehicles):
-        
+        best_path_coordinates = []
         source_node = get_node_indices([vehicle['source']], road_map)[0]
         destination_node = get_node_indices([vehicle['destination']], road_map)[0]
 
@@ -240,8 +242,6 @@ def main():
         best_path = choose_best_path(Q, source_node, destination_node, road_map)
         best_path_coordinates = convert_path_to_coordinates(best_path, road_map)
 
-        
-
         end_time = time.time()
         elapsed_time = end_time - start_time
 
@@ -251,6 +251,7 @@ def main():
             print(f"Vehicle {i + 1}: {vehicles[i]}") 
             print(f"Best Path (Coordinates):", best_path_coordinates)
             print(f"Elapsed Time = {elapsed_time:.3f}s\n")
+            
             
         else:
             print(f"Vehicle {i + 1}: No path found")
