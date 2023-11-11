@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+<<<<<<< HEAD
 road_map = [
         [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)],
         [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)],
@@ -8,6 +9,9 @@ road_map = [
         [(0, 3), (1, 3), (2, 3), (3, 3), (4, 3)],
         [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)]
     ]
+=======
+
+>>>>>>> 7b69ec69ed302710b7426eebbfaad5d98329ecef
 # Function to obtain node indices for given coordinates
 def get_node_indices(coordinates, road_map):
     node_indices = []
