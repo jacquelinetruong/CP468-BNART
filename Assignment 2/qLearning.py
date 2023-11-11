@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import time
 
 # Function to obtain node indices for given coordinates
 def get_node_indices(coordinates, road_map):
@@ -54,12 +53,12 @@ def visualize_grid_with_points(road_map, vehicles):
         vx, vy = zip(*destination_points)
         ax.scatter(vx, vy, c='green', marker='s', s=100)
 
-    ax.scatter(vx, vy, c='black', marker='X', s=100, label="source")
-    ax.scatter(vx, vy, c='green', marker='s', s=100, label="destination")
+    ax.scatter(vx, vy, c='black', marker='X', s=100, label="Source")
+    ax.scatter(vx, vy, c='green', marker='s', s=100, label="Destination")
     plt.xlim(0, len(road_map))
     plt.ylim(0, len(road_map[0]))
     plt.legend()
-    plt.title('Inital State')
+    plt.title('Initial State')
     plt.show()
     
 
@@ -90,8 +89,8 @@ def visualize_grid_with_arrows(road_map, vehicles, best_path_coordinates):
         dx, dy = zip(*destination_points)
         ax.scatter(dx, dy, c='green', marker='s', s=100)
 
-    ax.scatter(sx, sy, c='black', marker='X', s=100, label="source")
-    ax.scatter(dx, dy, c='green', marker='s', s=100, label="destination")
+    ax.scatter(sx, sy, c='black', marker='X', s=100, label="Source")
+    ax.scatter(dx, dy, c='green', marker='s', s=100, label="Destination")
 
     # Plot best path
     path_coordinates = np.array(best_path_coordinates)
@@ -233,8 +232,6 @@ def main():
         source_node = get_node_indices([vehicle['source']], road_map)[0]
         destination_node = get_node_indices([vehicle['destination']], road_map)[0]
 
-        start_time = time.time()
-
         # Simulate navigation using Q-learning
         Q = navigate_vehicle_Qlearning(Q, source_node, destination_node, road_map)
 
@@ -242,16 +239,11 @@ def main():
         best_path = choose_best_path(Q, source_node, destination_node, road_map)
         best_path_coordinates = convert_path_to_coordinates(best_path, road_map)
 
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-
         # Print the result for each vehicle
         if best_path is not None:
             best_paths.append(best_path)
             print(f"Vehicle {i + 1}: {vehicles[i]}") 
             print(f"Best Path (Coordinates):", best_path_coordinates)
-            print(f"Elapsed Time = {elapsed_time:.3f}s\n")
-            
             
         else:
             print(f"Vehicle {i + 1}: No path found")
