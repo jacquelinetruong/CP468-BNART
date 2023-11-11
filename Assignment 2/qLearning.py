@@ -59,8 +59,9 @@ def visualize_grid_with_points(road_map, vehicles):
     plt.xlim(0, len(road_map))
     plt.ylim(0, len(road_map[0]))
     plt.legend()
+    plt.title('Inital State')
     plt.show()
-
+    
 
 def visualize_grid_with_arrows(road_map, vehicles, best_path_coordinates):
     fig, ax = plt.subplots()
@@ -102,6 +103,7 @@ def visualize_grid_with_arrows(road_map, vehicles, best_path_coordinates):
         dy = best_path_coordinates[i + 1][1] - best_path_coordinates[i][1]
         ax.arrow(best_path_coordinates[i][0], best_path_coordinates[i][1], dx, dy, head_width=0.1, head_length=0.1, fc='red', ec='red')
 
+    plt.title(f'Best Path For {vehicle}')
     plt.xlim(0, len(road_map))
     plt.ylim(0, len(road_map[0]))
     plt.legend()
@@ -151,6 +153,7 @@ def navigate_vehicle_Qlearning(Q, start, end, road_map, epsilon=0.1, alpha=0.05,
     plt.plot(episode_rewards)
     plt.xlabel('Episode')
     plt.ylabel('Total Reward')
+    plt.title('Learning Curve')
     plt.show()
 
     return Q
@@ -236,6 +239,8 @@ def main():
         # Choose the best path based on learned Q-values
         best_path = choose_best_path(Q, source_node, destination_node, road_map)
         best_path_coordinates = convert_path_to_coordinates(best_path, road_map)
+
+        
 
         end_time = time.time()
         elapsed_time = end_time - start_time
