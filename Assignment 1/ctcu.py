@@ -6,8 +6,20 @@ def bnart(vehicle, road_map):
     source = vehicle['source']
     destination = vehicle['destination']
 
-# Calculating the Euclidean distance between two coordinates 
+def get_coordinates(node_index, road_map):
+    num_rows = len(road_map)
+    num_cols = len(road_map[0])
+    
+    row = node_index // num_cols
+    col = node_index % num_cols
+    
+    return road_map[row][col]
 
+def convert_path_to_coordinates(path, road_map):
+    coordinates_path = [get_coordinates(node_index, road_map) for node_index in path]
+    return coordinates_path
+
+# Calculating the Euclidean distance between two coordinates 
 # Function to calculate the shortest time using Dijkstra's algorithm
 def calculate_shortest_time_dijkstra(graph, start, end):
     shortest_times = {node: float('inf') for node in graph}
@@ -56,19 +68,18 @@ def main():
     
 
     road_map = [
-        [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)],
-        [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)],
+        [(0, 4), (1, 0), (2, 0), (3, 0), (4, 0)],
+        [(0, 3), (1, 1), (2, 1), (3, 1), (4, 1)],
         [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
-        [(0, 3), (1, 3), (2, 3), (3, 3), (4, 3)],
-        [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)]
+        [(0, 1), (1, 3), (2, 3), (3, 3), (4, 3)],
+        [(0, 0), (1, 4), (2, 4), (3, 4), (4, 4)]
     ]
 
     # Define the vehicles as sources and destinations with coordinates. source = starting point, destination = end point
     vehicles = [
-        {'source': (0, 0), 'destination': (3, 3)},
-        {'source': (4, 0), 'destination': (2, 3)},
-        {'source': (0, 3), 'destination': (4, 2)},
-        {'source': (0,0), 'destination': (1,1)}
+        {'source': (1, 1), 'destination': (3, 3)},
+        {'source': (4, 1), 'destination': (2, 3)},
+        {'source': (1, 3), 'destination': (4, 2)}
 
         # Add more vehicles with source and destination coordinates as needed
     ]
@@ -117,10 +128,12 @@ def main():
         # Call the function to calculate shortest times using Dijkstra's algorithm
         path, shortest_time = calculate_shortest_time_dijkstra(graph, source_node, destination_node)
         
+        best_path_coord = convert_path_to_coordinates(path, road_map)
+
         # Print the result for each vehicle
         if path is not None:
             print(f"Vehicle {i + 1}: Shortest Time = {shortest_time:.1f}")
-            print("Path Taken:", path)
+            print("Path Taken:", best_path_coord)
         else:
             print(f"Vehicle {i + 1}: No path found")
 
