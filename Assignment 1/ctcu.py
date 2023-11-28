@@ -170,6 +170,9 @@ def main():
         # Add more vehicles with source and destination coordinates as needed
     ]
 
+    # Visualize the grid and vehicles
+    visualize_grid_with_points(road_map, vehicles) 
+    
     # Create a distance matrix based on the Euclidean distances between coordinates
     num_nodes = len(road_map) * len(road_map[0])
     distance_matrix = np.zeros((num_nodes, num_nodes))
