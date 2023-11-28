@@ -1,5 +1,8 @@
 import numpy as np
 import heapq
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
 
 # Algorithm that chooses the best neighbouring node for a vehicle to proceed to
 def bnart(vehicle, road_map):
@@ -63,6 +66,89 @@ def get_node_indices(coordinates, road_map):
                 if (x, y) == (coord_x, coord_y):
                     node_indices.append(i * len(row) + j)
     return node_indices
+
+def visualize_grid_with_points(road_map, vehicles):
+    fig, ax = plt.subplots()
+
+    # Plot grid lines
+    for i in range(len(road_map)):
+        for j in range(len(road_map[0])):
+            ax.add_patch(patches.Rectangle((i, j), 1, 1, linewidth=1, edgecolor='black', facecolor='white'))
+
+    # Scatter plot for points
+    all_points = [(i, j) for row in road_map for i, j in row]
+    x, y = zip(*all_points)
+    ax.scatter(x, y, c='gray', marker='o', s=100, label='Grid Points')
+
+    # Plot vehicles
+    for vehicle in vehicles:
+        source = vehicle['source']
+        destination = vehicle['destination']
+
+        # Add vehicle points to the scatter plot
+        vehicle_points = [source]
+        vx, vy = zip(*vehicle_points)
+        ax.scatter(vx, vy, c='black', marker='X', s=100)
+
+        destination_points = [destination]
+        vx, vy = zip(*destination_points)
+        ax.scatter(vx, vy, c='green', marker='s', s=100)
+
+    ax.scatter(vx, vy, c='black', marker='X', s=100, label="Source")
+    ax.scatter(vx, vy, c='green', marker='s', s=100, label="Destination")
+    plt.xlim(0, len(road_map))
+    plt.ylim(0, len(road_map[0]))
+    plt.legend()
+    plt.title('Initial State')
+    plt.show()
+
+def visualize_grid_with_arrows(road_map, vehicles, best_path_coordinates):
+    fig, ax = plt.subplots()
+
+    # Plot grid lines
+    for i in range(len(road_map)):
+        for j in range(len(road_map[0])):
+            ax.add_patch(patches.Rectangle((i, j), 1, 1, linewidth=1, edgecolor='black', facecolor='white'))
+
+    # Scatter plot for points
+    all_points = [(i, j) for row in road_map for i, j in row]
+    x, y = zip(*all_points)
+    ax.scatter(x, y, c='gray', marker='o', s=100, label='Grid Points')
+
+    # Plot vehicles
+    for vehicle in vehicles:
+        source = vehicle['source']
+        destination = vehicle['destination']
+
+        # Add vehicle points to the scatter plot
+        source_points = [source]
+        sx, sy = zip(*source_points)
+        ax.scatter(sx, sy, c='black', marker='X', s=100)
+
+        destination_points = [destination]
+        dx, dy = zip(*destination_points)
+        ax.scatter(dx, dy, c='green', marker='s', s=100)
+
+    ax.scatter(sx, sy, c='black', marker='X', s=100, label="Source")
+    ax.scatter(dx, dy, c='green', marker='s', s=100, label="Destination")
+
+    # Plot best path
+    path_coordinates = np.array(best_path_coordinates)
+    ax.plot(path_coordinates[:, 0], path_coordinates[:, 1], marker='o', color='blue', markersize=8, linewidth=2, label='Best Path')
+
+    # Plot arrows to represent movement
+    for i in range(len(best_path_coordinates) - 1):
+        dx = best_path_coordinates[i + 1][0] - best_path_coordinates[i][0]
+        dy = best_path_coordinates[i + 1][1] - best_path_coordinates[i][1]
+        ax.arrow(best_path_coordinates[i][0], best_path_coordinates[i][1], dx, dy, head_width=0.1, head_length=0.1, fc='red', ec='red')
+
+    
+    plt.xlim(0, len(road_map))
+    plt.ylim(0, len(road_map[0]))
+    plt.legend()
+    plt.title("Best Path")
+    plt.show()
+
 
 def main():
     
@@ -136,6 +222,8 @@ def main():
             print("Path Taken:", best_path_coord)
         else:
             print(f"Vehicle {i + 1}: No path found")
+
+        visualize_grid_with_arrows(road_map, vehicles, best_path_coord)
 
 if __name__ == "__main__":
     main()
